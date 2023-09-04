@@ -1,9 +1,10 @@
 const canvas = document.querySelector("canvas");
 const ctx = canvas.getContext("2d");
-ctx.fillStyle = "green";
 let mousePos = { x: 0, y: 0 }
-let x = 0
 let start
+let pause = true
+
+const game = new Game();
 
 canvas.addEventListener("click", async () => {
     if (!document.pointerLockElement) {
@@ -14,6 +15,8 @@ canvas.addEventListener("click", async () => {
 });
 
 document.addEventListener("pointerlockchange", lockChangeAlert, false);
+
+game.load();
 
 window.requestAnimationFrame(run);
 
@@ -26,9 +29,11 @@ function lockChangeAlert() {
     if (document.pointerLockElement === canvas) {
         console.log("The pointer lock status is now locked");
         document.addEventListener("mousemove", updatePosition, false);
+        pause = false;
     } else {
         console.log("The pointer lock status is now unlocked");
         document.removeEventListener("mousemove", updatePosition, false);
+        pause = true;
     }
 }
 
@@ -37,16 +42,9 @@ function run(time) {
         start = time;
     }
     const deltaTime = (time - start) / 1000;
-    update(deltaTime)
-    draw()
+    if(!pause){
+        game.update(deltaTime)
+    }
+    game.draw()
     window.requestAnimationFrame(run);
-}
-
-function update(deltaTime) {
-    x = mousePos.x
-}
-
-function draw() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height)
-    ctx.fillRect(x, 10, 100, 100);
 }
