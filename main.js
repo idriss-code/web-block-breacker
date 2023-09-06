@@ -42,6 +42,7 @@ function run(time) {
         start = time;
     }
     const deltaTime = (time - start) / 1000;
+    start = time;
     if(!pause){
         game.update(deltaTime)
     }
