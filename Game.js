@@ -37,7 +37,7 @@ class Bowl {
 }
 
 class Pad {
-    w = 50;
+    w = 80;
     h = 20;
     x;
     y;
@@ -73,6 +73,8 @@ class Game {
 
     update(deltaTime) {
         this.pad.x = mousePos.x;
+        this.pad.x = this.pad.x < 0 ? 0 : this.pad.x
+        this.pad.x = this.pad.x > canvas.width - this.pad.w ? canvas.width - this.pad.w : this.pad.x
 
         this.bowl.x += this.bowl.velocity.x * deltaTime;
         this.bowl.y += this.bowl.velocity.y * deltaTime;
@@ -96,7 +98,6 @@ class Game {
             this.load()
         }
 
-
         if (Collision.boxBox(this.bowl.getBox(), this.pad.getBox())) {
             // on fait la difference entre le centre du pad et le bord qu'on raporte a la largeur
             const diff = (this.bowl.x - (this.pad.x + this.pad.w / 2)) / this.pad.w
@@ -108,6 +109,8 @@ class Game {
 
     draw() {
         ctx.clearRect(0, 0, canvas.width, canvas.height)
+        ctx.fillStyle = "#dae2df";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
         ctx.fillStyle = "green";
         ctx.fillRect(this.pad.x, this.pad.y, this.pad.w, this.pad.h);
         ctx.fillStyle = "black";
