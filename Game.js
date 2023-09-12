@@ -58,9 +58,25 @@ class Pad {
     }
 }
 
+class Block {
+    w;
+    h;
+    x;
+    y;
+
+    constructor(x, y, w, h) {
+        this.x = x;
+        this.y = y;
+        this.w = w;
+        this.h = h;
+    }
+}
+
 class Game {
     bowl;
     pad;
+    blocks = [];
+    level = 1;
 
     load() {
         const speed = 500;
@@ -69,6 +85,13 @@ class Game {
         this.bowl.velocity.multiply(speed);
         this.pad = new Pad(canvas.width / 2, canvas.height);
         mousePos.x = this.pad.x;
+
+        for (let i = 0; i < this.level; i++) {
+            for (let j = 0; j < 17 - i % 2; j++) {
+                let block = new Block(12 + j * 46 + i % 2 * 23, 20 + i * 25,40, 20 );
+                this.blocks.push(block);
+            }
+        }
     }
 
     update(deltaTime) {
@@ -105,6 +128,12 @@ class Game {
             this.bowl.velocity.setAngle(angle);
             this.bowl.y = this.pad.y - this.bowl.radius
         }
+
+        this.blocks.forEach((block,index,blocks)=>{
+            if(Collision.boxBox(this.bowl.getBox(), block)){
+                blocks.splice(index, 1);
+            }
+        })
     }
 
     draw() {
@@ -117,6 +146,10 @@ class Game {
         ctx.beginPath();
         ctx.arc(this.bowl.x, this.bowl.y, 10, 0, 2 * Math.PI);
         ctx.fill();
+
+        this.blocks.forEach(block => {
+            ctx.fillRect(block.x, block.y, block.w, block.h);
+        })
     }
 }
 
