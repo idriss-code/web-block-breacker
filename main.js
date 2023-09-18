@@ -1,10 +1,13 @@
+import Game from "./modules/Game.js";
+
+
+
 const canvas = document.querySelector("canvas");
-const ctx = canvas.getContext("2d");
 let mousePos = { x: 0, y: 0 }
 let start
 let pause = true
 
-const game = new Game();
+const game = new Game(canvas, mousePos);
 
 canvas.addEventListener("click", async () => {
     if (!document.pointerLockElement) {

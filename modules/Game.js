@@ -1,90 +1,26 @@
-class Bowl {
-    x;
-    y;
-    velocity;
-    radius = 10;
+import Bowl from './Bowl.js'
+import Pad from './Pad.js'
+import Block from './Block.js'
+import Collision from './Collision.js'
 
-    constructor(x, y, vX, vY) {
-        this.x = x;
-        this.y = y;
-        this.velocity = new Vector(vX, vY);
-    }
-
-    getRightBound() {
-        return this.x + this.radius;
-    }
-
-    getLeftBound() {
-        return this.x - this.radius;
-    }
-
-    getUpBound() {
-        return this.y - this.radius;
-    }
-
-    getDownBound() {
-        return this.y + this.radius
-    }
-
-    getBox() {
-        return {
-            x: this.x - this.radius,
-            y: this.y - this.radius,
-            w: this.radius * 2,
-            h: this.radius * 2,
-        }
-    }
-}
-
-class Pad {
-    w = 80;
-    h = 20;
-    x;
-    y;
-
-    constructor(cx, cy) {
-        this.x = cx - this.w / 2;
-        this.y = cy - this.h;
-
-    }
-
-    getBox() {
-        return {
-            x: this.x,
-            y: this.y,
-            w: this.w,
-            h: this.h,
-        }
-    }
-}
-
-class Block {
-    w;
-    h;
-    x;
-    y;
-
-    constructor(x, y, w, h) {
-        this.x = x;
-        this.y = y;
-        this.w = w;
-        this.h = h;
-    }
-}
-
-class Game {
+export default class Game {
     bowl;
     pad;
     blocks = [];
-    level = 1;
+    level = 5;
+
+    constructor(canvas, mousePos) {
+        this.canvas = canvas;
+        this.mousePos = mousePos;
+    }
 
     load() {
         const speed = 500;
         this.bowl = new Bowl(700, 20, 1, 1);
         this.bowl.velocity.normalise();
         this.bowl.velocity.multiply(speed);
-        this.pad = new Pad(canvas.width / 2, canvas.height);
-        mousePos.x = this.pad.x;
+        this.pad = new Pad(this.canvas.width / 2, this.canvas.height);
+        this.mousePos.x = this.pad.x;
 
         for (let i = 0; i < this.level; i++) {
             for (let j = 0; j < 17 - i % 2; j++) {
@@ -95,15 +31,15 @@ class Game {
     }
 
     update(deltaTime) {
-        this.pad.x = mousePos.x;
+        this.pad.x = this.mousePos.x;
         this.pad.x = this.pad.x < 0 ? 0 : this.pad.x
-        this.pad.x = this.pad.x > canvas.width - this.pad.w ? canvas.width - this.pad.w : this.pad.x
+        this.pad.x = this.pad.x > this.canvas.width - this.pad.w ? this.canvas.width - this.pad.w : this.pad.x
 
         this.bowl.x += this.bowl.velocity.x * deltaTime;
         this.bowl.y += this.bowl.velocity.y * deltaTime;
 
-        if (this.bowl.getRightBound() > canvas.width) {
-            this.bowl.x = canvas.width - this.bowl.radius
+        if (this.bowl.getRightBound() > this.canvas.width) {
+            this.bowl.x = this.canvas.width - this.bowl.radius
             this.bowl.velocity.x = - Math.abs(this.bowl.velocity.x);
         } else if (this.bowl.getLeftBound() < 0) {
             this.bowl.x = 0 + this.bowl.radius
@@ -116,7 +52,7 @@ class Game {
         }
 
         //fin de partie perdu
-        if (this.bowl.getDownBound() > canvas.height) {
+        if (this.bowl.getDownBound() > this.canvas.height) {
             console.log('game over')
             this.load()
         }
@@ -137,9 +73,11 @@ class Game {
     }
 
     draw() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height)
+        const ctx = this.canvas.getContext("2d");
+
+        ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
         ctx.fillStyle = "#dae2df";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
         ctx.fillStyle = "green";
         ctx.fillRect(this.pad.x, this.pad.y, this.pad.w, this.pad.h);
         ctx.fillStyle = "black";
