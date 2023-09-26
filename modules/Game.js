@@ -16,7 +16,7 @@ export default class Game {
 
     load() {
         const speed = 500;
-        this.bowl = new Bowl(700, 20, 1, 1);
+        this.bowl = new Bowl(700, 180, 1, 1);
         this.bowl.velocity.normalise();
         this.bowl.velocity.multiply(speed);
         this.pad = new Pad(this.canvas.width / 2, this.canvas.height);
@@ -24,7 +24,7 @@ export default class Game {
 
         for (let i = 0; i < this.level; i++) {
             for (let j = 0; j < 17 - i % 2; j++) {
-                let block = new Block(12 + j * 46 + i % 2 * 23, 20 + i * 25,40, 20 );
+                let block = new Block(12 + j * 46 + i % 2 * 23, 20 + i * 25, 40, 20);
                 this.blocks.push(block);
             }
         }
@@ -65,9 +65,11 @@ export default class Game {
             this.bowl.y = this.pad.y - this.bowl.radius
         }
 
-        this.blocks.forEach((block,index,blocks)=>{
-            if(Collision.boxBox(this.bowl.getBox(), block)){
+        this.blocks.forEach((block, index, blocks) => {
+            if (Collision.boxBox(this.bowl.getBox(), block)) {
                 blocks.splice(index, 1);
+                this.bowl.velocity.x = - this.bowl.velocity.x
+                this.bowl.velocity.y = - this.bowl.velocity.y
             }
         })
     }
